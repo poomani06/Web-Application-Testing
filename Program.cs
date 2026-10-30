@@ -2,6 +2,8 @@ using Scalar.AspNetCore;
 using WebApplicationTesting.Services;
 using WebApplicationTesting.Middleware;
 using WebApplicationTesting.Data;
+using WebApplicationTesting.Repositories;
+
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddSingleton<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 var app = builder.Build();

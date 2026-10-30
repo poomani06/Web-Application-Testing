@@ -19,30 +19,43 @@ public class StudentController : ControllerBase
 
     // GET: api/students
     [HttpGet]
-    public ActionResult<List<StudentDto>> GetAllStudents()
+    public async Task<ActionResult<List<StudentDto>>> GetAllStudents()
     {
-        return Ok(_studentService.GetAllStudents());
+        var students = await _studentService.GetAllStudentsAsync();
+
+        return Ok(students);
     }
 
     // GET: api/students/1
     [HttpGet("{id}")]
-    public ActionResult<StudentDto> GetStudentById(int id)
+    public async Task<ActionResult<StudentDto>> GetStudentById(int id)
     {
         if (id <= 0)
-            return BadRequest(new { message = "Student ID must be greater than zero." });
-        var student = _studentService.GetStudentById(id);
+        {
+            return BadRequest(new
+            {
+                message = "Student ID must be greater than zero."
+            });
+        }
+        var student = await _studentService.GetStudentByIdAsync(id);
 
-        if (student == null)
-            return NotFound(new { message = "Student not found." });
+        if (student is null)
+        {
+            return NotFound(new
+            {
+                message = "Student not found."
+            });
+        }
 
         return Ok(student);
     }
 
     // POST: api/students
     [HttpPost]
-    public ActionResult<StudentDto> AddStudent(CreateStudentDto studentDto)
+    public async Task<ActionResult<StudentDto>> AddStudent(
+        CreateStudentDto studentDto)
     {
-        if (_studentService.EmailExists(studentDto.Email))
+        if (await _studentService.EmailExistsAsync(studentDto.Email))
         {
             return Conflict(new
             {
@@ -51,7 +64,8 @@ public class StudentController : ControllerBase
         }
 
 
-        var createdStudent = _studentService.AddStudent(studentDto);
+        var createdStudent =
+            await _studentService.AddStudentAsync(studentDto);
 
         return CreatedAtAction(
             nameof(GetStudentById),
@@ -61,12 +75,19 @@ public class StudentController : ControllerBase
 
     // PUT: api/students/1
     [HttpPut("{id}")]
-    public ActionResult<StudentDto> UpdateStudent(int id, UpdateStudentDto studentDto)
+    public async Task<ActionResult<StudentDto>> UpdateStudent(
+        int id,
+        UpdateStudentDto studentDto)
     {
         if (id <= 0)
-            return BadRequest(new { message = "Student ID must be greater than zero." });
+        {
+            return BadRequest(new
+            {
+                message = "Student ID must be greater than zero."
+            });
+        }
 
-        if (_studentService.EmailExists(studentDto.Email, id))
+        if (await _studentService.EmailExistsAsync(studentDto.Email, id))
         {
             return Conflict(new
             {
@@ -74,24 +95,41 @@ public class StudentController : ControllerBase
             });
         }
 
-        var updatedStudent = _studentService.UpdateStudent(id, studentDto);
+        var updatedStudent =
+            await _studentService.UpdateStudentAsync(id, studentDto);
 
-        if (updatedStudent == null)
-            return NotFound(new { message = "Student not found." });
+        if(updatedStudent is null)
+        {
+            return NotFound(new
+            {
+                message = "Student not found."
+            });
+        }
 
         return Ok(updatedStudent);
     }
 
     
     [HttpDelete("{id}")]
-    public IActionResult DeleteStudent(int id)
+    public async Task<IActionResult> DeleteStudent(int id)
     {
         if (id <= 0)
-            return BadRequest(new { message = "Student ID must be greater than zero." });
-        var deleted = _studentService.DeleteStudent(id);
+        {
+            return BadRequest(new
+            {
+                message = "Student ID must be greater than zero."
+            });
+        }
+
+        var deleted = await _studentService.DeleteStudentAsync(id);
 
         if (!deleted)
-            return NotFound(new { message = "Student not found." });
+        {
+            return NotFound(new
+            {
+                message = "Student not found."
+            });
+        }
 
         return NoContent();
     }
