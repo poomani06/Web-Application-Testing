@@ -113,7 +113,8 @@ namespace WebApplicationTesting.Services
                 Id = student.Id,
                 Name = student.Name,
                 Email = student.Email,
-                Age = student.Age
+                Age = student.Age,
+                DepartmentName = student.Department?.DepartmentName
             };
         }
     }
