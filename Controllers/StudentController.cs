@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplicationTesting.DTOs;
-using WebApplicationTesting.Models;
+
 using WebApplicationTesting.Services;
 
 
@@ -19,14 +19,14 @@ public class StudentController : ControllerBase
 
     // GET: api/students
     [HttpGet]
-    public ActionResult<List<Student>> GetAllStudents()
+    public ActionResult<List<StudentDto>> GetAllStudents()
     {
         return Ok(_studentService.GetAllStudents());
     }
 
     // GET: api/students/1
     [HttpGet("{id}")]
-    public ActionResult<Student> GetStudentById(int id)
+    public ActionResult<StudentDto> GetStudentById(int id)
     {
         var student = _studentService.GetStudentById(id);
 
@@ -38,16 +38,11 @@ public class StudentController : ControllerBase
 
     // POST: api/students
     [HttpPost]
-    public ActionResult<Student> AddStudent(CreateStudentDto studentDto)
+    public ActionResult<StudentDto> AddStudent(CreateStudentDto studentDto)
     {
-        var student = new Student
-        {
-            Name = studentDto.Name,
-            Email = studentDto.Email,
-            Age = studentDto.Age
-        };
+        
 
-        var createdStudent = _studentService.AddStudent(student);
+        var createdStudent = _studentService.AddStudent(studentDto);
 
         return CreatedAtAction(
             nameof(GetStudentById),
@@ -57,14 +52,16 @@ public class StudentController : ControllerBase
 
     // PUT: api/students/1
     [HttpPut("{id}")]
-    public ActionResult<Student> UpdateStudent(int id, Student updatedStudent)
+    public ActionResult<StudentDto> UpdateStudent(
+        int id,
+        UpdateStudentDto studentDto)
     {
-        var student = _studentService.UpdateStudent(id, updatedStudent);
+        var updatedStudent = _studentService.UpdateStudent(id, studentDto);
 
-        if (student == null)
+        if (updatedStudent == null)
             return NotFound(new { message = "Student not found." });
 
-        return Ok(student);
+        return Ok(updatedStudent);
     }
 
     // DELETE: api/students/1
