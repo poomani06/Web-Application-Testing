@@ -2,7 +2,7 @@
 using WebApplicationTesting.DTOs;
 using WebApplicationTesting.Models;
 using WebApplicationTesting.Services;
-using WebApplicationTesting.Services;
+
 
 namespace WebApiPractice.Controllers;
 
@@ -10,9 +10,9 @@ namespace WebApiPractice.Controllers;
 [Route("api/students")]
 public class StudentController : ControllerBase
 {
-    private readonly StudentServices _studentService;
+    private readonly IStudentService _studentService;
 
-    public StudentController(StudentServices studentService)
+    public StudentController(IStudentService studentService)
     {
         _studentService = studentService;
     }
